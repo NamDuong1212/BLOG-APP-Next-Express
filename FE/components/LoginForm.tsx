@@ -49,7 +49,6 @@ const LoginForm = () => {
     setIsLoading(true);
   
     try {
-      // Sending login request
       const response = await fetch('http://localhost:8080/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

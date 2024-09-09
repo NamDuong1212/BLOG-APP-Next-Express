@@ -11,18 +11,17 @@ const Login = () => {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      // Redirect to / if user is already authenticated
       router.push('/');
     }
   }, [status, router]);
 
   if (status === 'loading') {
-    return <div>Loading...</div>; // Show a loading indicator while session status is being checked
+    return <div>Loading...</div>; 
   }
 
   return (
     <div>
-      <LoginForm /> {/* Render the login form if not authenticated */}
+      <LoginForm /> 
     </div>
   );
 };
