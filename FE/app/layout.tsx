@@ -4,7 +4,7 @@ import "./globals.css";
 import { Html } from "next/document";
 import Navbar from "@/components/Navbar";
 const inter = Inter({ subsets: ["latin"] });
-import AuthProvider from "./AuthProvider";
+
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -19,10 +19,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
           <Navbar/>
           {children}
-        </AuthProvider>
       </body>
     </html>
   );
