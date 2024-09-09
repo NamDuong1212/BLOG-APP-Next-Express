@@ -41,7 +41,7 @@ const PostManagement = () => {
           }
         });
         if (!response.ok) throw new Error('Failed to delete post');
-        setPosts(post.filter(post => post._id !== postId));
+        setPosts(posts.filter(post => post._id !== postId));
       } catch (err) {
         setError('Error deleting post: ' + err.message);
       }
