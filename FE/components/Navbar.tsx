@@ -16,10 +16,10 @@ const Navbar = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') { 
-      const token = localStorage.getItem('token');
-      if (token) {
+      const access_Token = localStorage.getItem('access_token');
+      if (access_Token) {
         setIsAuthenticated(true);
-        axios.get('/api/user', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get('/api/user', { headers: { Authorization: `Bearer ${access_Token}` } })
           .then(response => {
             setUser(response.data); 
           })
@@ -35,7 +35,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('token'); 
+      localStorage.removeItem('access_token'); 
     }
     signOut();
     setIsAuthenticated(false);
@@ -69,7 +69,7 @@ const Navbar = () => {
                   className='flex items-center cursor-pointer'
                 >
                   <Image
-                    src={user?.avatar || gigachad} 
+                    src={gigachad} 
                     alt='avatar'
                     sizes='100vw'
                     className='w-10 h-10 rounded-full'

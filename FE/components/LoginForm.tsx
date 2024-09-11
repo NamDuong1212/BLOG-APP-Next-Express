@@ -18,8 +18,8 @@ const LoginForm = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const access_Token = localStorage.getItem('access_token');
+    if (access_Token) {
       router.push('/');
     }
   }, [router]);
@@ -58,7 +58,7 @@ const LoginForm = () => {
       const data = await response.json();
       
       if (response.ok) {
-        localStorage.setItem('token', data.token); 
+        localStorage.setItem('access_token', data.access_token); 
         toast.success('Login Successful', { autoClose: 2000 });
 
         setTimeout(() => router.push('/'), 2000);

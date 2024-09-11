@@ -12,7 +12,7 @@ const CreatePost = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const currentUserID = '66dd5a565e5c0727974510fd'; 
-  const token = localStorage.getItem('token');
+  const access_Token = localStorage.getItem('access_token');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +24,7 @@ const CreatePost = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${access_Token}`
         },
         body: JSON.stringify({ title, content, author })
       });
@@ -67,7 +67,7 @@ const CreatePost = () => {
             onChange={(e) => setContent(e.target.value)}
             required
             className="w-full px-3 py-2 border rounded-md"
-            rows="4"
+            rows="10"
           />
         </div>
         <div>
