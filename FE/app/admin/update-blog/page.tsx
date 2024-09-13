@@ -13,14 +13,14 @@ const PostManagement = () => {
 
   const currentUserID = '66dd5a565e5c0727974510fd'; 
   const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZGQ1YTU2NWU1YzA3Mjc5NzQ1MTBmZCIsImVtYWlsIjoiZHVvbmcyNTAwQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJHJxUFFFYmJIR2NoLzVNSUZqTVVEaC5Cck9DblAvZ1lTeTEyWU1hNEFJaGg1S3pJYUNxNHhTIiwiaWF0IjoxNzI1ODcwMzM2LCJleHAiOjE3MjU4NzM5MzZ9.4BeGzKKQSIINXvpYF4Xh40Upa8tXnuU0RvEDrM8ieDA'; 
-
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
   useEffect(() => {
     fetchPosts();
   }, []);
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch('http://localhost:8080/post/getPost');
+      const response = await fetch(`${baseURL}/post/getPost`);
       if (!response.ok) throw new Error('Failed to fetch posts');
       const data = await response.json();
       setPosts(data);
@@ -34,7 +34,7 @@ const PostManagement = () => {
   const handleDelete = async (postId) => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       try {
-        const response = await fetch(`http://localhost:8080/post/deletePost/${currentUserID}` + id , {
+        const response = await fetch(`${baseURL}/post/deletePost/${currentUserID}` + id , {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -54,7 +54,7 @@ const PostManagement = () => {
 
   const handleUpdate = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/post/updatePost/${currentUserID}/${editingPost._id}`, {
+      const response = await fetch(`${baseURL}/post/updatePost/${currentUserID}/${editingPost._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -43,7 +43,8 @@ const SignupForm = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/users/signup', {
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${baseURL}/users/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, confirmPassword, phone }),

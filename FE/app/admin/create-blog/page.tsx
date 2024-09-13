@@ -20,7 +20,8 @@ const CreatePost = () => {
     setError('');
 
     try {
-      const response = await fetch(`http://localhost:8080/post/create/${currentUserID}`, {
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${baseURL}/post/create/${currentUserID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
