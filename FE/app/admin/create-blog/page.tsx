@@ -11,8 +11,9 @@ const CreatePost = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const currentUserID = '66dd5a565e5c0727974510fd'; 
+  const userID = localStorage.getItem('user.id');
   const access_Token = localStorage.getItem('access_token');
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,8 +21,7 @@ const CreatePost = () => {
     setError('');
 
     try {
-      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const response = await fetch(`${baseURL}/post/create/${currentUserID}`, {
+      const response = await fetch(`${baseURL}/post/create/${userID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

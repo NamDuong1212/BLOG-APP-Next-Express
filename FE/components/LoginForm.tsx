@@ -60,6 +60,7 @@ const LoginForm = () => {
       
       if (response.ok) {
         localStorage.setItem('access_token', data.access_token); 
+        localStorage.setItem('user.id', data.user.id); 
         toast.success('Login Successful', { autoClose: 2000 });
 
         setTimeout(() => router.push('/'), 2000);
