@@ -35,8 +35,8 @@ const Navbar = () => {
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('access_token'); 
-      localStorage.removeItem('user.id'); 
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user_id') 
     }
     signOut();
     setIsAuthenticated(false);

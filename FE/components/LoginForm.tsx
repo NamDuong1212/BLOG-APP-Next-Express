@@ -60,10 +60,12 @@ const LoginForm = () => {
       
       if (response.ok) {
         localStorage.setItem('access_token', data.access_token); 
-        localStorage.setItem('user.id', data.user.id); 
-        toast.success('Login Successful', { autoClose: 2000 });
+        localStorage.setItem('user_id', data.data.id); 
+        toast.success('Login Successful', { 
+          autoClose: 2000, 
+          onClose: () => router.push('/')
+        });
 
-        setTimeout(() => router.push('/'), 2000);
       } else {
         toast.error(data.message || 'Invalid Credentials', { autoClose: 2000 });
       }

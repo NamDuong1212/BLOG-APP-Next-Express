@@ -11,8 +11,6 @@ const CreatePost = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const userID = localStorage.getItem('user.id');
-  const access_Token = localStorage.getItem('access_token');
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const handleSubmit = async (e) => {
@@ -21,6 +19,9 @@ const CreatePost = () => {
     setError('');
 
     try {
+      const access_Token = localStorage.getItem('access_token');
+      const userID = localStorage.getItem('user_id');
+      console.log("userID:", userID);
       const response = await fetch(`${baseURL}/post/create/${userID}`, {
         method: 'POST',
         headers: {
