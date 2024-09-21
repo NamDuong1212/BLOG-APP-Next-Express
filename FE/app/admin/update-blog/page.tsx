@@ -88,6 +88,9 @@ const handleDelete = async (postID) => {
       setError('Error updating post: ' + err.message);
     }
   };
+  const handleRead = (postID) => {
+    router.push(`/posts/${postID}`);
+  };
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
@@ -126,7 +129,7 @@ const handleDelete = async (postID) => {
         </div>
       )}
 
-      <ul>
+<ul>
         {posts.map(post => (
           <li key={post._id} className="mb-4 p-4 border rounded">
             <h2 className="text-xl font-semibold">{post.title}</h2>
@@ -136,8 +139,11 @@ const handleDelete = async (postID) => {
               <button onClick={() => handleEdit(post)} className="bg-yellow-500 text-white px-3 py-1 rounded mr-2">
                 Edit
               </button>
-              <button onClick={() => handleDelete(post._id)} className="bg-red-500 text-white px-3 py-1 rounded">
+              <button onClick={() => handleDelete(post._id)} className="bg-red-500 text-white px-3 py-1 rounded mr-2">
                 Delete
+              </button>
+              <button onClick={() => handleRead(post._id)} className="bg-green-500 text-white px-3 py-1 rounded">
+                Read
               </button>
             </div>
           </li>
