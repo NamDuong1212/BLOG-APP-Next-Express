@@ -29,7 +29,6 @@ const PostManagement = () => {
       if (data.length === 0) {
         setError('Oops, no post at all');
       } else {
-        // Sắp xếp bài post mới nhất lên đầu dựa trên trường createdAt
         const sortedPosts = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setPosts(sortedPosts);
       }
