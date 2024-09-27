@@ -29,6 +29,7 @@ const PostManagement = () => {
       if (data.length === 0) {
         setError('Oops, no post at all');
       } else {
+
         const sortedPosts = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setPosts(sortedPosts);
       }
@@ -75,8 +76,7 @@ const PostManagement = () => {
       if (!response.ok) throw new Error('Failed to update post');
       
       const newPostData = await response.json();
-      setPosts((prevPosts) =>
-        prevPosts.map((post) => (post._id === newPostData._id ? newPostData : post))
+      setPosts((prevPosts) =>prevPosts.map((post) => (post._id === newPostData._id ? newPostData : post))
       );
       setEditingPostId(null); 
     } catch (err) {
@@ -105,10 +105,7 @@ const PostManagement = () => {
                   type="text"
                   value={post.title}
                   onChange={(e) =>
-                    setPosts((prevPosts) =>
-                      prevPosts.map((p) =>
-                        p._id === post._id ? { ...p, title: e.target.value } : p
-                      )
+                    setPosts((prevPosts) =>prevPosts.map((p) =>p._id === post._id ? { ...p, title: e.target.value } : p)
                     )
                   }
                   className="w-full p-2 mb-2 border rounded"
@@ -116,10 +113,7 @@ const PostManagement = () => {
                 <textarea
                   value={post.content}
                   onChange={(e) =>
-                    setPosts((prevPosts) =>
-                      prevPosts.map((p) =>
-                        p._id === post._id ? { ...p, content: e.target.value } : p
-                      )
+                    setPosts((prevPosts) =>prevPosts.map((p) =>p._id === post._id ? { ...p, content: e.target.value } : p)
                     )
                   }
                   className="w-full p-2 mb-2 border rounded"
@@ -129,10 +123,7 @@ const PostManagement = () => {
                   type="text"
                   value={post.author}
                   onChange={(e) =>
-                    setPosts((prevPosts) =>
-                      prevPosts.map((p) =>
-                        p._id === post._id ? { ...p, author: e.target.value } : p
-                      )
+                    setPosts((prevPosts) =>prevPosts.map((p) =>p._id === post._id ? { ...p, author: e.target.value } : p)
                     )
                   }
                   className="w-full p-2 mb-2 border rounded"
