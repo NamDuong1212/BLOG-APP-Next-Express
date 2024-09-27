@@ -3,13 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import moment from 'moment';
 import gigachad from '@/public/img/gigachad.jpg';
 import { AiFillHeart, AiOutlineHeart, AiOutlineComment, AiTwotoneCalendar } from 'react-icons/ai';
 
 const PostDetail = ({ params }) => {
   const [post, setPost] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); 
   const [error, setError] = useState('');
   const [isLiked, setIsLiked] = useState(false); 
   const [postLikes, setPostLikes] = useState(0); 
@@ -21,7 +20,6 @@ const PostDetail = ({ params }) => {
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   useEffect(() => {
-    // Access localStorage only in useEffect
     const userID = localStorage.getItem('user_id');
     if (userID) {
       setUserID(userID);
@@ -97,7 +95,6 @@ const PostDetail = ({ params }) => {
 
   return (
     <section className="container max-w-3xl">
-      {/* Author and Edit/Delete options */}
       <div className="flex flex-col items-center justify-center">
         <div className="flex flex-col justify-center items-center py-10">
           <Image
@@ -124,7 +121,7 @@ const PostDetail = ({ params }) => {
         </div>
       </div>
 
-      {/* Post Image */}
+      {/* Post image */}
       <div>
         <Image
           src={post?.image ? post.image.url : gigachad}
@@ -136,14 +133,14 @@ const PostDetail = ({ params }) => {
         />
       </div>
 
-      {/* Post Content */}
+      {/* Post content */}
       <div className="text-start space-y-5">
         {post.content.split('\n').map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
         ))}
       </div>
 
-      {/* Likes and Comments */}
+      {/* Likes and comments */}
       <div className="py-12">
         <div className="flex gap-10 items-center text-xl justify-center">
           <div className="flex items-center gap-1">
@@ -161,11 +158,11 @@ const PostDetail = ({ params }) => {
         </div>
       </div>
 
-      {/* Comment Section */}
+      {/* Comment section */}
       <div className="space-y-5">
         <h3 className="text-xl font-bold">Comments</h3>
 
-        {/* Display Comments */}
+        {/* Display comments */}
         <div className="space-y-4">
           {postComments.length === 0 ? (
             <p>No comments yet.</p>
@@ -180,7 +177,7 @@ const PostDetail = ({ params }) => {
           )}
         </div>
 
-        {/* Comment Input */}
+        {/* Comment input */}
         <div className="flex flex-col gap-2">
           <textarea
             className="border p-2 rounded-md"
