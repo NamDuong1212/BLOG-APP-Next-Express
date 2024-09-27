@@ -73,7 +73,7 @@ const PostDetail = ({ params }) => {
   const handleCommentSubmit = async () => {
     if (!newComment.trim() || !userID) return;
     try {
-      const response = await fetch(`${baseURL}/post/addComment/${params.id}`, {
+      const response = await fetch(`${baseURL}/comment/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

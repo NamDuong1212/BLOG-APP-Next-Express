@@ -19,6 +19,19 @@ const PostManagement = () => {
   const userID = localStorage.getItem('user_id');
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+  const formatDateTime = (isoString) => {
+    const date = new Date(isoString);
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: '2-digit',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    };
+    return date.toLocaleString('en-US', options);
+  };
+
   {/* Fetch post */}
   const fetchPosts = async () => {
     try {
@@ -122,10 +135,7 @@ const PostManagement = () => {
                 <input
                   type="text"
                   value={post.author}
-                  onChange={(e) =>
-                    setPosts((prevPosts) =>prevPosts.map((p) =>p._id === post._id ? { ...p, author: e.target.value } : p)
-                    )
-                  }
+                  disabled
                   className="w-full p-2 mb-2 border rounded"
                 />
                 <button
@@ -144,6 +154,8 @@ const PostManagement = () => {
             ) : (
               <>
                 <h2 className="text-xl font-semibold">{post.title}</h2>
+                <p className="text-sm text-gray-500">Created: {formatDateTime(post.createdAt)}</p>
+                <p className="text-sm text-gray-500">Updated: {formatDateTime(post.updatedAt)}</p>
                 <p>{post.content}</p>
                 <p className="text-sm text-gray-500">Author: {post.author}</p>
                 <div className="mt-2">

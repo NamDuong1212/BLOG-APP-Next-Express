@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
 
 const CreatePost = () => {
   const [title, setTitle] = useState('');
@@ -12,6 +11,13 @@ const CreatePost = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  useEffect(() => {
+    const userName = localStorage.getItem('user_name');
+    if (userName) {
+      setAuthor(userName);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +43,7 @@ const CreatePost = () => {
 
       const data = await response.json();
       console.log('Post created:', data);
-      router.push('/'); 
+      router.push('/');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -47,52 +53,52 @@ const CreatePost = () => {
 
   return (
     <section className="container">
-    <div className="max-w-lg mx-auto py-10 space-y-10">
-      <h1 className="text-center special-word">Create New Post</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block mb-1">Title</label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="content" className="block mb-1">Content</label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-            className="w-full px-3 py-2 border rounded-md"
-            rows="10"
-          />
-        </div>
-        <div>
-          <label htmlFor="author" className="block mb-1">Author</label>
-          <input
-            type="text"
-            id="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          />
-        </div>
-        {error && <p className="text-red-500">{error}</p>}
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="btn w-full"
-        >
-          {isLoading ? 'Creating...' : 'Create Post'}
-        </button>
-      </form>
-    </div>
+      <div className="max-w-lg mx-auto py-10 space-y-10">
+        <h1 className="text-center special-word">Create New Post</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="title" className="block mb-1">Title</label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="w-full px-3 py-2 border rounded-md"
+            />
+          </div>
+          <div>
+            <label htmlFor="content" className="block mb-1">Content</label>
+            <textarea
+              id="content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+              className="w-full px-3 py-2 border rounded-md"
+              rows="10"
+            />
+          </div>
+          <div>
+            <label htmlFor="author" className="block mb-1">Author</label>
+            <input
+              type="text"
+              id="author"
+              value={author}
+              disabled
+              required
+              className="w-full px-3 py-2 border rounded-md"
+            />
+          </div>
+          {error && <p className="text-red-500">{error}</p>}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="btn w-full"
+          >
+            {isLoading ? 'Creating...' : 'Create Post'}
+          </button>
+        </form>
+      </div>
     </section>
   );
 };
