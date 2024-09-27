@@ -8,7 +8,7 @@ const PostManagement = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [editingPostId, setEditingPostId] = useState(null); // Lưu post đang edit qua ID
+  const [editingPostId, setEditingPostId] = useState(null); 
   const router = useRouter();
 
   useEffect(() => {
@@ -79,7 +79,7 @@ const PostManagement = () => {
       setPosts((prevPosts) =>
         prevPosts.map((post) => (post._id === newPostData._id ? newPostData : post))
       );
-      setEditingPostId(null); // Đóng form edit sau khi cập nhật thành công
+      setEditingPostId(null); 
     } catch (err) {
       setError('Error updating post: ' + err.message);
     }
