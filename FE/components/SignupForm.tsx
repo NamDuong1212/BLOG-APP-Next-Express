@@ -44,7 +44,7 @@ const SignupForm = () => {
 
     try {
       const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const response = await fetch(`${baseURL}/users/signup`, {
+      const response = await fetch(`${baseURL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, confirmPassword, phone }),
