@@ -28,7 +28,7 @@ const CreatePost = () => {
       const access_Token = localStorage.getItem('access_token');
       const userID = localStorage.getItem('user_id');
       console.log("userID:", userID);
-      const response = await fetch(`${baseURL}/post/create/${userID}`, {
+      const response = await fetch(`${baseURL}/post/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -35,7 +35,7 @@ const PostManagement = () => {
   {/* Fetch post */}
   const fetchPosts = async () => {
     try {
-      const response = await fetch(`${baseURL}/post/getPost`);
+      const response = await fetch(`${baseURL}/post/getHomePost`);
       if (!response.ok) throw new Error('Failed to fetch posts');
       const data = await response.json();
 
@@ -58,7 +58,7 @@ const PostManagement = () => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       setIsLoading(true);
       try {
-        const response = await fetch(`${baseURL}/post/deletePost/${userID}/${postID}`, {
+        const response = await fetch(`${baseURL}/post/deletePost/${postID}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -76,15 +76,15 @@ const PostManagement = () => {
   };
 
   {/* Update post */}
-  const handleUpdate = async (updatedPost) => {
+  const handleUpdate = async (postID) => {
     try {
-      const response = await fetch(`${baseURL}/post/updatePost/${userID}/${updatedPost._id}`, {
+      const response = await fetch(`${baseURL}/post/${postID._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(updatedPost),
+        body: JSON.stringify(postID),
       });
       if (!response.ok) throw new Error('Failed to update post');
       

@@ -31,7 +31,7 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { email, password } = state;
-
+  
     if (!email || !password) {
       toast.error('All fields are required', { autoClose: 2000 });
       return;
@@ -57,16 +57,21 @@ const LoginForm = () => {
       });
   
       const data = await response.json();
-      
+  
       if (response.ok) {
         localStorage.setItem('access_token', data.access_token); 
         localStorage.setItem('user_id', data.data.id); 
         localStorage.setItem('user_name', data.data.name); 
+  
+        console.log('access_token:', localStorage.getItem('access_token'));
+        console.log('user_id:', localStorage.getItem('user_id'));
+        console.log('user_name:', localStorage.getItem('user_name'));
+  
         toast.success('Login Successful', { 
           autoClose: 2000, 
           onClose: () => router.push('/')
         });
-
+        
       } else {
         toast.error(data.message || 'Invalid Credentials', { autoClose: 2000 });
       }
@@ -76,6 +81,7 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <section className="container">
