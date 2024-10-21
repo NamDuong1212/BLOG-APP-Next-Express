@@ -8,16 +8,16 @@ const PostManagement = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [editingPostId, setEditingPostId] = useState(null); 
+  const [editingPostId, setEditingPostId] = useState(null);
   const router = useRouter();
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
 
   const accessToken = localStorage.getItem('access_token');
   const userID = localStorage.getItem('user_id');
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const formatDateTime = (isoString) => {
     const date = new Date(isoString);
@@ -32,153 +32,206 @@ const PostManagement = () => {
     return date.toLocaleString('en-US', options);
   };
 
-  {/* Fetch post */}
+  // Fetch posts and flatten the category structure
   const fetchPosts = async () => {
     try {
       const response = await fetch(`${baseURL}/post/getHomePost`);
       if (!response.ok) throw new Error('Failed to fetch posts');
       const data = await response.json();
 
-      if (data.length === 0) {
-        setError('Oops, no post at all');
-      } else {
-
-        const sortedPosts = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setPosts(sortedPosts);
+      if (!data || data.length === 0) {
+        setError('No posts available');
+        return;
       }
+
+      // Flatten the nested structure from backend
+      const flattenedPosts = data.reduce((acc, category) => {
+        const postsInCategory = category.blogs.map(blog => ({...blog,categoryName: category.name}));
+        return [...acc, ...postsInCategory];
+      }, []);
+
+      // Sort posts by creation date
+      const sortedPosts = flattenedPosts.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      setPosts(sortedPosts);
     } catch (err) {
       setError('Error fetching posts: ' + err.message);
+      toast.error('Failed to fetch posts');
     } finally {
       setIsLoading(false);
     }
   };
 
-  {/* Delete post */}
+  // Delete post
   const handleDelete = async (postID) => {
-    if (window.confirm('Are you sure you want to delete this post?')) {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${baseURL}/post/deletePost/${postID}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-          },
-        });
-        if (!response.ok) throw new Error('Failed to delete post');
-
-        setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postID));
-      } catch (err) {
-        console.error('Error deleting post:', err.message);
-      } finally {
-        setIsLoading(false);
-      }
+    if (!window.confirm('Are you sure you want to delete this post?')) {
+      return;
     }
-  };
 
-  {/* Update post */}
-  const handleUpdate = async (postID) => {
+    setIsLoading(true);
     try {
-      const response = await fetch(`${baseURL}/post/${postID._id}`, {
-        method: 'PUT',
+      const response = await fetch(`${baseURL}/post/deletePost/${postID}`, {
+        method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(postID),
       });
-      if (!response.ok) throw new Error('Failed to update post');
-      
-      const newPostData = await response.json();
-      setPosts((prevPosts) =>prevPosts.map((post) => (post._id === newPostData._id ? newPostData : post))
-      );
-      setEditingPostId(null); 
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.msg || 'Failed to delete post');
+      }
+      // Fetch posts list after delete
+      await fetchPosts();
+      toast.success('Post deleted successfully');
     } catch (err) {
-      setError('Error updating post: ' + err.message);
+      console.error('Error deleting post:', err);
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleRead = (postID) => {
-    router.push(`/posts/${postID}`);
+// Update post
+const handleUpdate = async (post) => {
+  try {
+    if (!post.title || !post.content) {
+      toast.error('Title and content are required');
+      return;
+    }
+
+    const response = await fetch(`${baseURL}/post/${post._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        title: post.title,
+        content: post.content,
+        category: post.category._id,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.msg || 'Failed to update post');
+    }
+    // Fetch posts list after update
+    await fetchPosts();
+
+    setEditingPostId(null);
+    toast.success('Post updated successfully');
+  } catch (err) {
+    toast.error(err.message);
+  }
+};
+
+  const handleRead = (postId) => {
+    router.push(`/posts/${postId}`); // Navigate to posts/[id]
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div className="text-red-500">{error}</div>;
+  if (isLoading) return <div className="text-center py-4">Loading...</div>;
+  if (error) return <div className="text-red-500 text-center py-4">{error}</div>;
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Post Management</h1>
-      <ul>
-        {/* Showing post list*/}
+      <ul className="space-y-4">
         {posts.map((post) => (
-          <li key={post._id} className="mb-4 p-4 border rounded">
+          <li key={post._id} className="mb-4 p-4 border rounded shadow-sm hover:shadow-md transition-shadow">
             {editingPostId === post._id ? (
-              <div className="mb-4 p-4 border rounded">
-                <h2 className="text-xl font-semibold mb-2">Edit Post</h2>
-                <input
-                  type="text"
-                  value={post.title}
-                  onChange={(e) =>
-                    setPosts((prevPosts) =>prevPosts.map((p) =>p._id === post._id ? { ...p, title: e.target.value } : p)
-                    )
-                  }
-                  className="w-full p-2 mb-2 border rounded"
-                />
-                <textarea
-                  value={post.content}
-                  onChange={(e) =>
-                    setPosts((prevPosts) =>prevPosts.map((p) =>p._id === post._id ? { ...p, content: e.target.value } : p)
-                    )
-                  }
-                  className="w-full p-2 mb-2 border rounded"
-                  rows="4"
-                />
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold">Edit Post</h2>
+                <div>
+                  <label className="text-xl font-semibold">Title</label>
+                  <input
+                    type="text"
+                    value={post.title}
+                    onChange={(e) =>
+                      setPosts(prevPosts =>prevPosts.map(p =>p._id === post._id ? { ...p, title: e.target.value } : p) // Browse through the id match with post id to change the value
+                      )
+                    }
+                    className="w-full p-2 mb-2 border rounded"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xl font-semibold">Content</label>
+                  <textarea
+                    value={post.content}
+                    onChange={(e) =>
+                      setPosts(prevPosts =>prevPosts.map(p =>p._id === post._id ? { ...p, content: e.target.value } : p) // Same things 
+                      )
+                    }
+                    className="w-full p-2 mb-2 border rounded"
+                  />
+                </div>
+                <label className="text-xl font-semibold">Author</label>
                 <input
                   type="text"
                   value={post.author}
                   disabled
                   className="w-full p-2 mb-2 border rounded"
                 />
-                <button
-                  onClick={() => handleUpdate(post)}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
-                >
-                  Update
-                </button>
-                <button
-                  onClick={() => setEditingPostId(null)}
-                  className="bg-gray-500 text-white px-4 py-2 rounded"
-                >
-                  Cancel
-                </button>
+
+                <div>
+                  <label className="text-xl font-semibold">Category</label>
+                  <input
+                    type="text"
+                    value={post.categoryName}
+                    disabled
+                    className="w-full p-2 mb-2 border rounded"
+                  />
+                </div>
+
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleUpdate(post)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded transition-colors"
+                  >
+                    Update
+                  </button>
+                  <button
+                    onClick={() => setEditingPostId(null)}
+                    className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             ) : (
-              <>
+              <div>
                 <h2 className="text-xl font-semibold">{post.title}</h2>
+                <p className="text-sm text-gray-500">Category: {post.category.name}</p>
                 <p className="text-sm text-gray-500">Created: {formatDateTime(post.createdAt)}</p>
                 <p className="text-sm text-gray-500">Updated: {formatDateTime(post.updatedAt)}</p>
-                <p>{post.content}</p>
+                <p className="mt-2">{post.content}</p>
                 <p className="text-sm text-gray-500">Author: {post.author}</p>
-                <div className="mt-2">
+                
+                <div className="mt-4 flex space-x-2">
                   <button
                     onClick={() => setEditingPostId(post._id)}
-                    className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded transition-colors"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(post._id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded mr-2"
+                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition-colors"
                   >
                     Delete
                   </button>
                   <button
                     onClick={() => handleRead(post._id)}
-                    className="bg-green-500 text-white px-3 py-1 rounded"
+                    className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded transition-colors"
                   >
                     Read
                   </button>
                 </div>
-              </>
+              </div>
             )}
           </li>
         ))}

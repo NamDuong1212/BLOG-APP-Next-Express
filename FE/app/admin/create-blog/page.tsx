@@ -3,12 +3,20 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+interface Category {
+  _id: string;
+  name: string;
+}
+
 const CreatePost = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  
   const router = useRouter();
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -17,8 +25,25 @@ const CreatePost = () => {
     if (userName) {
       setAuthor(userName);
     }
+    fetchCategories();
   }, []);
 
+  // Fetch category from database
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${baseURL}/category/get`);
+      const data = await response.json();
+      setCategories(data.categories);
+      // Set default selected category if categories exist
+      if (data.categories.length > 0) {
+        setSelectedCategory(data.categories[0].name);
+      }
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+    }
+  };
+
+  // Create post
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -27,14 +52,19 @@ const CreatePost = () => {
     try {
       const access_Token = localStorage.getItem('access_token');
       const userID = localStorage.getItem('user_id');
-      console.log("userID:", userID);
+      
       const response = await fetch(`${baseURL}/post/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${access_Token}`
         },
-        body: JSON.stringify({ title, content, author })
+        body: JSON.stringify({ 
+          title, 
+          content, 
+          author,
+          category: selectedCategory 
+        })
       });
 
       if (!response.ok) {
@@ -67,6 +97,26 @@ const CreatePost = () => {
               className="w-full px-3 py-2 border rounded-md"
             />
           </div>
+          
+          {/* Fetch list categories from database in dropdown form */}
+          <div>
+            <label htmlFor="category" className="block mb-1">Category</label>
+            <select
+              id="category"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              required
+              className="w-full px-3 py-2 border rounded-md bg-white"
+            >
+              <option value="">Select a category</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div>
             <label htmlFor="content" className="block mb-1">Content</label>
             <textarea
@@ -75,9 +125,10 @@ const CreatePost = () => {
               onChange={(e) => setContent(e.target.value)}
               required
               className="w-full px-3 py-2 border rounded-md"
-              rows="10"
+              rows="4"
             />
           </div>
+
           <div>
             <label htmlFor="author" className="block mb-1">Author</label>
             <input
@@ -89,7 +140,9 @@ const CreatePost = () => {
               className="w-full px-3 py-2 border rounded-md"
             />
           </div>
+
           {error && <p className="text-red-500">{error}</p>}
+          
           <button
             type="submit"
             disabled={isLoading}

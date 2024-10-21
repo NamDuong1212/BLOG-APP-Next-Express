@@ -65,6 +65,9 @@ const Navbar = () => {
               <Link href="/admin/update-blog" className={usePathname() === '/update-blog' ? "text-primaryColor font-bold" : ""}>Update</Link>
             </li>
             <li>
+              <Link href="/admin/categories" className={usePathname() === '/categories' ? "text-primaryColor font-bold" : ""}>Categories</Link>
+            </li>
+            <li>
               <div className='relative'>
                 <div
                   onClick={handleShowDropdown}
